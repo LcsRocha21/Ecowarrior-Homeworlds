@@ -12,10 +12,8 @@ public class MenuVoiceController : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     
-    // Referência para o Menu
     private Menu menuController;
     
-    // Estados dos comandos de voz do menu
     [HideInInspector] public bool voiceStartGame = false;
     [HideInInspector] public bool voiceCredits = false;
     [HideInInspector] public bool voiceOptions = false;
@@ -23,7 +21,6 @@ public class MenuVoiceController : MonoBehaviour
     
     void Start()
     {
-        // Obtém referência do Menu
         menuController = GetComponent<Menu>();
         if (menuController == null)
         {
@@ -36,10 +33,8 @@ public class MenuVoiceController : MonoBehaviour
             return;
         }
         
-        // Configura os comandos de voz PRIMEIRO
         SetupVoiceCommands();
         
-        // Inicia o reconhecimento de voz APENAS SE HABILITADO
         if (enableVoiceCommands)
         {
             StartVoiceRecognition();
@@ -50,10 +45,8 @@ public class MenuVoiceController : MonoBehaviour
     {
         Debug.Log("MenuVoiceController: Entrando em SetupVoiceCommands().");
 
-        // Limpa o dicionário para evitar duplicação
         keywords.Clear();
 
-        // Comandos para NOVO JOGO / INICIAR JOGO
         keywords.Add("iniciar jogo", () => OnVoiceCommand("startGame"));
         keywords.Add("novo jogo", () => OnVoiceCommand("startGame"));
         keywords.Add("iniciar", () => OnVoiceCommand("startGame"));
@@ -64,21 +57,18 @@ public class MenuVoiceController : MonoBehaviour
         keywords.Add("new game", () => OnVoiceCommand("startGame"));
         keywords.Add("start game", () => OnVoiceCommand("startGame"));
         
-        // Comandos para OPÇÕES / CONFIGURAÇÕES
         keywords.Add("opções", () => OnVoiceCommand("options"));
         keywords.Add("configurações", () => OnVoiceCommand("options"));
         keywords.Add("settings", () => OnVoiceCommand("options"));
         keywords.Add("options", () => OnVoiceCommand("options"));
         keywords.Add("config", () => OnVoiceCommand("options"));
         
-        // Comandos para CRÉDITOS
         keywords.Add("créditos", () => OnVoiceCommand("credits"));
         keywords.Add("sobre", () => OnVoiceCommand("credits"));
         keywords.Add("credits", () => OnVoiceCommand("credits"));
         keywords.Add("about", () => OnVoiceCommand("credits"));
         keywords.Add("info", () => OnVoiceCommand("credits"));
         
-        // Comandos para SAIR / FECHAR
         keywords.Add("sair", () => OnVoiceCommand("quit"));
         keywords.Add("fechar", () => OnVoiceCommand("quit"));
         keywords.Add("encerrar", () => OnVoiceCommand("quit"));
@@ -93,14 +83,12 @@ public class MenuVoiceController : MonoBehaviour
     {
         Debug.Log($"MenuVoiceController: Tentando iniciar reconhecimento com {keywords.Count} palavras-chave.");
 
-        // Se o KeywordRecognizer já existe e está rodando, não faça nada
         if (keywordRecognizer != null && keywordRecognizer.IsRunning)
         {
             Debug.LogWarning("MenuVoiceController: Reconhecimento de voz já está rodando. Ignorando Start().");
             return;
         }
 
-        // Se o KeywordRecognizer existe mas não está rodando, inicie-o
         if (keywordRecognizer != null && !keywordRecognizer.IsRunning)
         {
             keywordRecognizer.Start();
@@ -108,7 +96,6 @@ public class MenuVoiceController : MonoBehaviour
             return;
         }
 
-        // Se o KeywordRecognizer não existe, crie-o e inicie-o
         if (keywordRecognizer == null)
         {
             if (keywords.Count == 0)
@@ -136,7 +123,6 @@ public class MenuVoiceController : MonoBehaviour
     {
         if (!enableVoiceCommands) return;
         
-        // Mapeia o ConfidenceLevel para um valor float para comparação
         float recognizedConfidenceValue = 0f;
         switch (args.confidence)
         {
@@ -154,12 +140,10 @@ public class MenuVoiceController : MonoBehaviour
                 break;
         }
 
-        // Verifica o nível de confiança
         if (recognizedConfidenceValue >= confidenceThreshold)
         {
             Debug.Log($"MenuVoiceController: Comando de voz reconhecido: \'{args.text}\' (Confiança: {args.confidence})");
             
-            // Executa o comando correspondente
             if (keywords.ContainsKey(args.text))
             {
                 keywords[args.text].Invoke();
@@ -200,7 +184,6 @@ public class MenuVoiceController : MonoBehaviour
     
     void Update()
     {
-        // Processa os comandos de voz do menu
         if (voiceStartGame)
         {
             Debug.Log("MenuVoiceController: Executando StartGame()");
@@ -208,7 +191,7 @@ public class MenuVoiceController : MonoBehaviour
             {
                 menuController.StartGame();
             }
-            voiceStartGame = false; // Reset após execução
+            voiceStartGame = false; 
         }
         
         if (voiceOptions)
@@ -218,7 +201,7 @@ public class MenuVoiceController : MonoBehaviour
             {
                 menuController.OptionsScene();
             }
-            voiceOptions = false; // Reset após execução
+            voiceOptions = false; 
         }
         
         if (voiceCredits)
@@ -228,7 +211,7 @@ public class MenuVoiceController : MonoBehaviour
             {
                 menuController.CreditsScene();
             }
-            voiceCredits = false; // Reset após execução
+            voiceCredits = false; 
         }
         
         if (voiceQuit)
@@ -238,11 +221,10 @@ public class MenuVoiceController : MonoBehaviour
             {
                 menuController.leaveGame();
             }
-            voiceQuit = false; // Reset após execução
+            voiceQuit = false; 
         }
     }
     
-    // Métodos públicos para controle externo
     public void EnableVoiceCommands()
     {
         enableVoiceCommands = true;
@@ -256,7 +238,6 @@ public class MenuVoiceController : MonoBehaviour
         Debug.Log("MenuVoiceController: Comandos de voz desabilitados.");
         StopVoiceRecognition();
         
-        // Limpa todos os comandos ativos
         voiceStartGame = false;
         voiceOptions = false;
         voiceCredits = false;
@@ -309,3 +290,4 @@ public class MenuVoiceController : MonoBehaviour
         }
     }
 }
+
