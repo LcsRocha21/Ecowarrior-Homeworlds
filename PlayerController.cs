@@ -32,10 +32,8 @@ public class PlayerController : MonoBehaviour
     public float timeBetweenShots;
     private float shootCounter;
     
-    // Referência para o VoiceController
     private VoiceController voiceController;
     
-    // Variáveis para controle de input combinado (teclado + voz)
     private bool keyboardInput = false;
     private bool voiceInput = false;
 
@@ -44,7 +42,6 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
         
-        // Obtém referência do VoiceController
         voiceController = GetComponent<VoiceController>();
         if (voiceController == null)
         {
@@ -66,20 +63,16 @@ public class PlayerController : MonoBehaviour
             isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
             Debug.Log($"PlayerController: isGrounded = {isGrounded}");
 
-            // Combina input do teclado com comandos de voz
             HandleMovementInput();
             HandleJumpInput();
             HandleShootInput();
 
-            // Aplica movimento
             Vector3 move = new Vector3(0, 0, horizontal);
             controller.Move(move * Time.deltaTime);
 
-            // Aplica gravidade
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
 
-            // Inverte o lado baseado na direção do movimento
             if (horizontal > 0 && !isFacingRight)
             {
                 Flip();
@@ -89,14 +82,12 @@ public class PlayerController : MonoBehaviour
                 Flip();
             }
 
-            // Delay entre cada tiro
             if (shootCounter > 0)
             {
                 shootCounter -= Time.deltaTime;
             }
         }
 
-        // Atualiza animações
         anim.SetBool("Grounded", isGrounded);
         anim.SetFloat("Speed", Mathf.Abs(horizontal));
     }
@@ -127,7 +118,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         
-        // Prioridade: se há input do teclado, usa o teclado; senão usa a voz
         if (keyboardInput)
         {
             horizontal = keyboardHorizontal * moveSpeed;
@@ -167,13 +157,13 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             AudioManager.instance.PlaySfx(3);
             Debug.Log("PlayerController: Pulo executado!");
-            // Resetar voiceJump após o uso para que não pule em todos os frames
+
             if (voiceController != null) voiceController.voiceJump = false;
         }
         else if (voiceJump && !isGrounded)
         {
             Debug.Log("PlayerController: Comando de voz para PULAR detectado, mas não está no chão (isGrounded = FALSE).");
-            // Resetar voiceJump mesmo se não pular, para evitar pulos atrasados
+
             if (voiceController != null) voiceController.voiceJump = false;
         }
     }
@@ -199,18 +189,16 @@ public class PlayerController : MonoBehaviour
             anim.SetTrigger("Shoot");
             shootCounter = timeBetweenShots;
             Debug.Log("PlayerController: Tiro executado!");
-            // Resetar voiceShoot após o uso para que não atire em todos os frames
             if (voiceController != null) voiceController.voiceShoot = false;
         }
         else if (voiceShoot && shootCounter > 0)
         {
             Debug.Log($"PlayerController: Comando de voz para ATIRAR detectado, mas em cooldown (shootCounter = {shootCounter:F2}).");
-            // Resetar voiceShoot mesmo se não atirar, para evitar tiros atrasados
+
             if (voiceController != null) voiceController.voiceShoot = false;
         }
     }
 
-    //Cálculo para inverter o lado
     void Flip()
     {
         isFacingRight = !isFacingRight;
@@ -249,7 +237,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
     
-    // Métodos públicos para controle externo dos comandos de voz
+
     public void EnableVoiceCommands()
     {
         if (voiceController != null)
