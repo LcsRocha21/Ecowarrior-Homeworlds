@@ -12,23 +12,19 @@ public class VoiceController : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     
-    // Referência para o PlayerController
     private PlayerController playerController;
     
-    // Estados dos comandos de voz
     [HideInInspector] public bool voiceMoveRight = false;
     [HideInInspector] public bool voiceMoveLeft = false;
     [HideInInspector] public bool voiceJump = false;
     [HideInInspector] public bool voiceShoot = false;
     
-    // Controle de duração dos comandos
-    private float moveCommandDuration = 0.5f; // Duração em segundos para comandos de movimento
+    private float moveCommandDuration = 0.5f; 
     private float moveRightTimer = 0f;
     private float moveLeftTimer = 0f;
     
     void Start()
     {
-        // Obtém referência do PlayerController
         playerController = GetComponent<PlayerController>();
         if (playerController == null)
         {
@@ -38,13 +34,10 @@ public class VoiceController : MonoBehaviour
         if (playerController == null)
         {
             Debug.LogError("VoiceController: PlayerController não encontrado!");
-            // Não retorne aqui, pois o VoiceController pode funcionar independentemente do PlayerController para depuração
         }
         
-        // Configura os comandos de voz PRIMEIRO
         SetupVoiceCommands();
         
-        // Inicia o reconhecimento de voz APENAS SE HABILITADO
         if (enableVoiceCommands)
         {
             StartVoiceRecognition();
@@ -55,7 +48,6 @@ public class VoiceController : MonoBehaviour
     {
         Debug.Log("VoiceController: Entrando em SetupVoiceCommands().");
 
-        // Limpa o dicionário para evitar duplicação se Start for chamado várias vezes (embora não deva ser)
         keywords.Clear();
 
         // Comandos em português
@@ -73,7 +65,7 @@ public class VoiceController : MonoBehaviour
         keywords.Add("saltar", () => OnVoiceCommand("jump"));
         keywords.Add("disparar", () => OnVoiceCommand("shoot"));
         
-        // Comandos em inglês (opcional)
+        // Comandos em inglês
         keywords.Add("right", () => OnVoiceCommand("moveRight"));
         keywords.Add("left", () => OnVoiceCommand("moveLeft"));
         keywords.Add("jump", () => OnVoiceCommand("jump"));
@@ -91,14 +83,12 @@ public class VoiceController : MonoBehaviour
     {
         Debug.Log($"VoiceController: Tentando iniciar reconhecimento com {keywords.Count} palavras-chave.");
 
-        // Se o KeywordRecognizer já existe e está rodando, não faça nada
         if (keywordRecognizer != null && keywordRecognizer.IsRunning)
         {
             Debug.LogWarning("VoiceController: Reconhecimento de voz já está rodando. Ignorando Start().");
             return;
         }
 
-        // Se o KeywordRecognizer existe mas não está rodando, inicie-o
         if (keywordRecognizer != null && !keywordRecognizer.IsRunning)
         {
             keywordRecognizer.Start();
@@ -106,13 +96,12 @@ public class VoiceController : MonoBehaviour
             return;
         }
 
-        // Se o KeywordRecognizer não existe, crie-o e inicie-o
         if (keywordRecognizer == null)
         {
             if (keywords.Count == 0)
             {
                 Debug.LogError("VoiceController: Não há palavras-chave para iniciar o reconhecimento. Certifique-se de que SetupVoiceCommands() foi chamado e adicionou palavras-chave.");
-                return; // Não tente criar um KeywordRecognizer sem palavras-chave
+                return; 
             }
             keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
             keywordRecognizer.OnPhraseRecognized += OnPhraseRecognized;
@@ -134,12 +123,11 @@ public class VoiceController : MonoBehaviour
     {
         if (!enableVoiceCommands) return;
         
-        // Mapeia o ConfidenceLevel para um valor float para comparação
         float recognizedConfidenceValue = 0f;
         switch (args.confidence)
         {
             case ConfidenceLevel.High:
-                recognizedConfidenceValue = 0.8f; // Exemplo de mapeamento
+                recognizedConfidenceValue = 0.8f;
                 break;
             case ConfidenceLevel.Medium:
                 recognizedConfidenceValue = 0.6f;
@@ -152,12 +140,10 @@ public class VoiceController : MonoBehaviour
                 break;
         }
 
-        // Verifica o nível de confiança
         if (recognizedConfidenceValue >= confidenceThreshold)
         {
             Debug.Log($"VoiceController: Comando de voz reconhecido: \'{args.text}\' (Confiança: {args.confidence})");
-            
-            // Executa o comando correspondente
+
             if (keywords.ContainsKey(args.text))
             {
                 keywords[args.text].Invoke();
@@ -177,13 +163,13 @@ public class VoiceController : MonoBehaviour
             case "moveRight":
                 voiceMoveRight = true;
                 moveRightTimer = moveCommandDuration;
-                voiceMoveLeft = false; // Para o movimento para esquerda
+                voiceMoveLeft = false; 
                 break;
                 
             case "moveLeft":
                 voiceMoveLeft = true;
                 moveLeftTimer = moveCommandDuration;
-                voiceMoveRight = false; // Para o movimento para direita
+                voiceMoveRight = false; 
                 break;
                 
             case "jump":
@@ -207,7 +193,6 @@ public class VoiceController : MonoBehaviour
     
     void Update()
     {
-        // Atualiza os timers dos comandos de movimento
         if (moveRightTimer > 0f)
         {
             moveRightTimer -= Time.deltaTime;
@@ -227,24 +212,9 @@ public class VoiceController : MonoBehaviour
                 Debug.Log("VoiceController: voiceMoveLeft setado para FALSE (timer expirou).");
             }
         }
-        
-        // Reset dos comandos instantâneos após um frame
-        // O PlayerController_Modified deve ler essas variáveis ANTES que sejam resetadas
-        if (voiceJump)
-        {
-            // Debug.Log("VoiceController: voiceJump ainda TRUE no início do Update."); // Descomente para depuração mais profunda
-        }
-        
-        if (voiceShoot)
-        {
-            // Debug.Log("VoiceController: voiceShoot ainda TRUE no início do Update."); // Descomente para depuração mais profunda
-        }
 
-        // As variáveis voiceJump e voiceShoot são resetadas no PlayerController_Modified após o uso.
-        // Não as resetamos aqui para garantir que o PlayerController_Modified as veja no mesmo frame.
     }
     
-    // Métodos públicos para controle externo
     public void EnableVoiceCommands()
     {
         enableVoiceCommands = true;
@@ -258,7 +228,6 @@ public class VoiceController : MonoBehaviour
         Debug.Log("VoiceController: Comandos de voz desabilitados.");
         StopVoiceRecognition();
         
-        // Limpa todos os comandos ativos
         voiceMoveRight = false;
         voiceMoveLeft = false;
         voiceJump = false;
@@ -319,3 +288,4 @@ public class VoiceController : MonoBehaviour
         }
     }
 }
+
