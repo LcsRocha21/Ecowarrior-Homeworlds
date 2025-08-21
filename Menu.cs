@@ -7,12 +7,10 @@ public class Menu : MonoBehaviour
     public string creditsName;
     public string optionsName;
 
-    // Referência para o MenuVoiceController
     private MenuVoiceController menuVoiceController;
 
     void Start()
     {
-        // Obtém referência do MenuVoiceController
         menuVoiceController = GetComponent<MenuVoiceController>();
         if (menuVoiceController == null)
         {
@@ -27,12 +25,6 @@ public class Menu : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        // O MenuVoiceController já gerencia os comandos de voz no seu próprio Update()
-        // Não precisamos fazer nada aqui, pois o MenuVoiceController chama diretamente
-        // as funções públicas deste script (StartGame, CreditsScene, etc.)
-    }
 
     public void StartGame()
     {
@@ -59,7 +51,6 @@ public class Menu : MonoBehaviour
         Debug.Log("Leaving the game");
     }
     
-    // Métodos públicos para controle externo dos comandos de voz
     public void EnableVoiceCommands()
     {
         if (menuVoiceController != null)
@@ -78,3 +69,4 @@ public class Menu : MonoBehaviour
         }
     }
 }
+
