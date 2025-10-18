@@ -80,7 +80,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (other.gameObject.tag == "Health")
         {
-            AudioManager.instance.PlaySfx(0);
+            AudioManager.instance.PlaySfx(5);
             currentHealth += healthpickupAmount;
             healthbar.SetHealth(currentHealth);
             if (currentHealth > maxHealth)

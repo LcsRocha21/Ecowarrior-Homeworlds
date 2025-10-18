@@ -118,6 +118,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+        // Prioridade: se há input do teclado, usa o teclado; senão usa a voz
         if (keyboardInput)
         {
             horizontal = keyboardHorizontal * moveSpeed;
@@ -157,13 +158,13 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             AudioManager.instance.PlaySfx(3);
             Debug.Log("PlayerController: Pulo executado!");
-
+            
             if (voiceController != null) voiceController.voiceJump = false;
         }
         else if (voiceJump && !isGrounded)
         {
             Debug.Log("PlayerController: Comando de voz para PULAR detectado, mas não está no chão (isGrounded = FALSE).");
-
+            
             if (voiceController != null) voiceController.voiceJump = false;
         }
     }
@@ -189,16 +190,18 @@ public class PlayerController : MonoBehaviour
             anim.SetTrigger("Shoot");
             shootCounter = timeBetweenShots;
             Debug.Log("PlayerController: Tiro executado!");
+            
             if (voiceController != null) voiceController.voiceShoot = false;
         }
         else if (voiceShoot && shootCounter > 0)
         {
             Debug.Log($"PlayerController: Comando de voz para ATIRAR detectado, mas em cooldown (shootCounter = {shootCounter:F2}).");
-
+            
             if (voiceController != null) voiceController.voiceShoot = false;
         }
     }
 
+    //Cálculo para inverter o lado
     void Flip()
     {
         isFacingRight = !isFacingRight;
@@ -237,7 +240,6 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
     
-
     public void EnableVoiceCommands()
     {
         if (voiceController != null)

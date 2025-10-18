@@ -28,16 +28,27 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy")
+        if (other.gameObject.CompareTag("Enemy"))
         {
-            Instantiate(hitEffectPrefab, transform.position, transform.rotation);
+
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy != null)
             {
                 enemy.TakeDamage();
             }
+            else if (other.GetComponent<Enemy4>() is Enemy4 enemyV4)
+            {
+                enemyV4.TakeDamage();
+            }
+            else if (other.GetComponent<Boss>() is Boss boss)
+            {
+                boss.TakeDamage();
+            }
         }
+        
+        Instantiate(hitEffectPrefab, transform.position, transform.rotation);
         Destroy(gameObject);
     }
-
 }
+
+

@@ -25,7 +25,6 @@ public class Menu : MonoBehaviour
         }
     }
 
-
     public void StartGame()
     {
         Debug.Log("Menu: StartGame() chamado - Carregando cena do jogo...");
@@ -50,7 +49,7 @@ public class Menu : MonoBehaviour
         Application.Quit();
         Debug.Log("Leaving the game");
     }
-    
+
     public void EnableVoiceCommands()
     {
         if (menuVoiceController != null)
@@ -69,4 +68,3 @@ public class Menu : MonoBehaviour
         }
     }
 }
-

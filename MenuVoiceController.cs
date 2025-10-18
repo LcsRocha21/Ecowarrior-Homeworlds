@@ -21,6 +21,7 @@ public class MenuVoiceController : MonoBehaviour
     
     void Start()
     {
+        // Obtém referência do Menu
         menuController = GetComponent<Menu>();
         if (menuController == null)
         {
@@ -47,6 +48,7 @@ public class MenuVoiceController : MonoBehaviour
 
         keywords.Clear();
 
+        // Comandos para novo jogo
         keywords.Add("iniciar jogo", () => OnVoiceCommand("startGame"));
         keywords.Add("novo jogo", () => OnVoiceCommand("startGame"));
         keywords.Add("iniciar", () => OnVoiceCommand("startGame"));
@@ -57,18 +59,21 @@ public class MenuVoiceController : MonoBehaviour
         keywords.Add("new game", () => OnVoiceCommand("startGame"));
         keywords.Add("start game", () => OnVoiceCommand("startGame"));
         
+        // Comandos para opções
         keywords.Add("opções", () => OnVoiceCommand("options"));
         keywords.Add("configurações", () => OnVoiceCommand("options"));
         keywords.Add("settings", () => OnVoiceCommand("options"));
         keywords.Add("options", () => OnVoiceCommand("options"));
         keywords.Add("config", () => OnVoiceCommand("options"));
         
+        // Comandos para créditos
         keywords.Add("créditos", () => OnVoiceCommand("credits"));
         keywords.Add("sobre", () => OnVoiceCommand("credits"));
         keywords.Add("credits", () => OnVoiceCommand("credits"));
         keywords.Add("about", () => OnVoiceCommand("credits"));
         keywords.Add("info", () => OnVoiceCommand("credits"));
         
+        // Comandos para fechar o jogo
         keywords.Add("sair", () => OnVoiceCommand("quit"));
         keywords.Add("fechar", () => OnVoiceCommand("quit"));
         keywords.Add("encerrar", () => OnVoiceCommand("quit"));
@@ -140,6 +145,7 @@ public class MenuVoiceController : MonoBehaviour
                 break;
         }
 
+        // Verifica o nível de confiança
         if (recognizedConfidenceValue >= confidenceThreshold)
         {
             Debug.Log($"MenuVoiceController: Comando de voz reconhecido: \'{args.text}\' (Confiança: {args.confidence})");
@@ -290,4 +296,3 @@ public class MenuVoiceController : MonoBehaviour
         }
     }
 }
-
